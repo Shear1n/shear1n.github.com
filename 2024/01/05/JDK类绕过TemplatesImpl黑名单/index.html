@@ -6,19 +6,19 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="HandheldFriendly" content="True">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
-    <meta name="description" content="序言代码块测试 12345678910111213141516import java.io.ByteArrayOutputStream;import java.io.InputStream;&#x2F;&#x2F; 使用 Runtime 类进行命令执行public class RuntimeExec &amp;#123;    public static void main(String[] args) throws Exc">
+    <meta name="description" content="这是一篇加密文章，需要密码才能继续阅读。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="JDK类绕过TemplatesImpl黑名单">
 <meta property="og:url" content="https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/index.html">
 <meta property="og:site_name" content="Shear1n&#39;s Blog">
-<meta property="og:description" content="序言代码块测试 12345678910111213141516import java.io.ByteArrayOutputStream;import java.io.InputStream;&#x2F;&#x2F; 使用 Runtime 类进行命令执行public class RuntimeExec &amp;#123;    public static void main(String[] args) throws Exc">
+<meta property="og:description" content="这是一篇加密文章，需要密码才能继续阅读。">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2024-01-05T06:33:48.229Z">
-<meta property="article:modified_time" content="2024-01-19T01:50:30.058Z">
+<meta property="article:modified_time" content="2024-01-19T01:55:49.993Z">
 <meta property="article:author" content="Shear1n">
 <meta property="article:tag" content="Java">
 <meta property="article:tag" content="CTF">
-<meta property="article:tag" content="private">
+<meta property="article:tag" content="Encrypted">
 <meta name="twitter:card" content="summary">
     
     
@@ -111,16 +111,12 @@
   <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&title=JDK类绕过TemplatesImpl黑名单"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
   <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&title=JDK类绕过TemplatesImpl黑名单"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
   <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&title=JDK类绕过TemplatesImpl黑名单"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&name=JDK类绕过TemplatesImpl黑名单&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&name=JDK类绕过TemplatesImpl黑名单&description=这是一篇加密文章，需要密码才能继续阅读。"><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
   <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&t=JDK类绕过TemplatesImpl黑名单"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
 </ul>
 
     </div>
     
-    
-      <div id="toc">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">序言</span></a></li></ol>
-      </div>
     
   </span>
 </div>
@@ -155,7 +151,7 @@
       
     <div class="article-tag">
         <i class="fa-solid fa-tag"></i>
-        <a class="p-category" href="/tags/CTF/" rel="tag">CTF</a>, <a class="p-category" href="/tags/Java/" rel="tag">Java</a>, <a class="p-category" href="/tags/private/" rel="tag">private</a>
+        <a class="p-category" href="/tags/CTF/" rel="tag">CTF</a>, <a class="p-category" href="/tags/Encrypted/" rel="tag">Encrypted</a>, <a class="p-category" href="/tags/Java/" rel="tag">Java</a>
     </div>
 
 
@@ -164,14 +160,18 @@
   
 
   <div class="content e-content" itemprop="articleBody">
-    <h2 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h2><p>代码块测试</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.io.ByteArrayOutputStream;</span><br><span class="line"><span class="keyword">import</span> java.io.InputStream;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 使用 Runtime 类进行命令执行</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RuntimeExec</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">InputStream</span> <span class="variable">inputStream</span> <span class="operator">=</span> Runtime.getRuntime().exec(<span class="string">&quot;whoami&quot;</span>).getInputStream();</span><br><span class="line">        <span class="type">byte</span>[] cache = <span class="keyword">new</span> <span class="title class_">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        <span class="type">ByteArrayOutputStream</span> <span class="variable">byteArrayOutputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayOutputStream</span>();</span><br><span class="line">        <span class="type">int</span> <span class="variable">readLen</span> <span class="operator">=</span> <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">while</span> ((readLen = inputStream.read(cache))!=-<span class="number">1</span>)&#123;</span><br><span class="line">            byteArrayOutputStream.write(cache, <span class="number">0</span>, readLen);</span><br><span class="line">        &#125;</span><br><span class="line">        System.out.println(byteArrayOutputStream);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-
-
-
+    <div class="hbe hbe-container" id="hexo-blog-encrypt" data-wpm="抱歉，您输入的密码错误，请检查后重新输入。" data-whm="OOPS, these decrypted content may changed, but you can still have a look.">
+  <script id="hbeData" type="hbeData" data-hmacdigest="b180e35ea1550527469d6a342493c2dcb89e463af2f3df9074af3fa287627ad4">0e514413b3e1ac99b50750938e5610854b47753d3269c59b7b69b297fc766a65eb60686ad31634ea8c5fb3b56b73d952d39a42e473d104db5489eeee56eacb8fa586a8e0a1e08316affedb2ac2df6153e1878c4888ec4fab9261d7f4a1832c4ff9359cd71e0bc17a38884034a1b62070ae5ef803bd7897a032dc266ab31aa26c606418a3a9d62f077a72956fd2542d6396422dcff51cbf673f8291d3dca86ab2ec61bdac384a0008cbb2ac1c630d0036a18beee99ef2497afb482e9e10f01be7cb2a0e33ca7708131f48939e015c0a8f8f69afe18aa402e498383d1bf9f6b802b4784c6b3d0578d545c156175b0f86ece16285c216716b20e62edcf0faf987945645c6bf092d07cf00a1d56125502d016c0bb95b9e55da257b8e1163ad6f5b831429eb508ba9f3cdf9ada49da4458b2b255514f3e2488e620ca6c1de4959c9ee717b1b1883a9f7c485453738227908a3012f0b0a5cec41fd5c2419c953617b458ac576625c0a9ba5201e8cf6c5fc437e9914f0b26a074dc9fd21171a1b89450f8d18acc3af620675f1bc9a75761e4f5fc96f1d363882b073717e6d98382fe2b55cc563d184d7df4da2532b0638a4544b3e5777512db9c590a85d5481e17da826fa2ff9edf3fd11c0f47e3fb17978113a73d564a710c3b805455097c50ed4d4eaa2fa9a5b4ca406eb622569d4a8456cb5b0257c9cf5f73e9ff9fda449d24bb8df3d87b327e098cb0e86fac2dcae53ba4f045878bce20e51079601a03399b6c3c1ef4d46d638abdf203e402be12fc2a4888d0a2f819bd5b9f522105e91449bfc39b5d615826bc60cb8d8ee00de796281786c29ae56c535326a4a57e1b7c924545ecf2f08eaf80f143295d3e34615035de03336824920e2610d4751a4e048ded6bbea7c6ae1946b505d429f29421b260e22b6a171e11405b41107f2b50010acb51842107af769369de7086153fee1e279834acc544fcb0d630208c54b77ba9725d170a48b4c18daae41f109668aeb7dcadb6b2d94cb3c258d0cdf2195355990e697cf70d408b358e4f33c2122bcf04b1fde3c8700b6b0955647b4c48ec1544672f9be707738be2adfb740212e370d82d145beef06e7e25c0d1dbe2def53a0f23190a6231b25bb665378048fc5b152350e83cafff85b6ba5a685f993e28a2b7dd82b9058500285a696c00a941dcf21374cdb7d1a716f9afe871cebb6ddc751166367537028e2c6583616f3232a081863e8ac29fe49ef61e9e6b83e71025b899b90cb0cd3ea1c0e586611662af0bb368085d72cd2e9b28b5c820786c8817b828580a1b6db0a9d3dee49eb0fc0e0edb5798ad191d34e36a26b1c6b73bf292c8b4a905ea1409d5fd8d4e975b7fde2f9450581918b1c0a6be06b56384a00bd09fb1f1e2c47229a4149f8cba0692d956ef4c0f2fb25e9411586c69ead6683ed75b4a3d1c71abdce5b754c103443ecde1861eaf54f4560e113f2313f6a6af520600c8a1319079610e66c964d50412ef757a19df5f380edb927a945cf24d7868529451a98008495495045626e407007fb70b63dba6a6e784cf58733515cf951c9913def32bf7f402a7adbae9e5250b6cff118b88f149626ee59ecf35e2418a2219c6761f10034886f09b0a579285ef4a795c06bcb54b03a212cf5e617d59fdae3e407369ffbf672ffc8ccb40463dc886d52f46e2eba455d5040f16a13cdb331ab41b193ab0855187c11a0b2b8e7d59c70070920006f2be479a17dca143c909240e7d5141798a071fc444cf4bdc3d2c02a610cb536a7bf1e69ed9240e0284e55fe9cacac61f8e351a9f28ee133b2a1802963782c115bfdf8f4f0d254f3d432b4d1b0b649c7ae6d4c8519b06e2d3e2d991d26026a7c134c085eb807b8d8d8181f09a71614b853c5363e4e6182f79082f5ed3d6eb0ed69cbe2ba4c3a5ecfbd2443f6edc5927e24538ca1b5e82793dd6b9b0bad332abc14584f7a314237123f72a1e6776fb1dac49c14967b1644e7e1edab85a5a086d5a9745ce2121d5c37470e230bbd174eba96a31a1dbf18644f057103db92ccf128a9254e284755232180369f33fd76cc76d722797139f1db4e1bb3bfbfc9d21fbef4e162457df5b1ed894bc82d10940360b9e6189e7407ae27c1565b06cb12e238b2a3006b02f6865db9c07887a20524c1172e6112ab7dfb012f357caa356f97e953d17a60526040bdbafac670ae7ad07a6afadd9b55d3917235e9a96ea7b14ba478613bddaf09fe77efea8d5755e4c1d13ba586b98ce9134cb878091526791a50ec0d36a49b612d2a75870f09ecc86cdc06b9883f6bb0c19898fb5b749548a86459f67007e5f9820d538ed3181897326716bde6e4ee9d6bb9d3ec4e7dbca243d631df431b7866a7d7e514152ff7967cd1db5d0395a1f704b07c51ecaff8d40e8e477a4e59670aad8e8439b18cb81b320c850a71d8a4d223950ccfd70a69e21e84050aa55e4a84a3fb9803819eb2d5c9b2aad6f14d2b68ea3c061a9da33ed78693e209b77d652cfa5d366d79576c93cbc10e7905c2f37fc3524272fa5fd271079b8900c058b8a3bec4be934f54d3c8556d8b8955a72c6900134d38f0bbeccb2b3962e8b95e4855c42833450b9d1a58cb12e4ca40c0d2bd279882e22a10923f8aae31685dde3f1f4f4286387225b719b30551708db18db1a4cdd02e1b7a3f543b90b2ff8bb997baa49990b8b60ba005f4ebcce3329a92e6bfc36c0ee23b80c4de7bdfb75b87f58255df2e43a2b6c8882a73e4fdf99987f3e3f395109a0de137d3dfc6c3d05a285ea6dd75beb23eaec6a5dfb22c5afad3eff84dfea528ccad6aefb02a56f0fccd04f6145b8091f74a59a1f00c95c295da527828d4508649a6715e315607ef7a0b4a29cb7a929592c45aeea8f47b902ca395626f89fd7b26026feea60702b82b3ed68c3de6c8d687e5573b153999c4d070f3a2703ba5863e9c7c10be402add1ca511e01815b199b350b656338518b907b49e716259484825458742903792c053525ed8a759458aec8379a239b668552b0509031aa97717256ec0233612389569eb381888df7c78df8d7c32186c022f982bd7d50fd4d55ed87f4f0fc0290261574bd8073d61252b0f7fdd40ebdb0f13ffa576fa395a673697975f38d96aa4dea643e6744bb22635fdde03f74f0efa875c35f7b92391edef30c5f118151b2fb5ab356b2ea05e8f7acfe01d9a21bbe364f85b88418a676933ac505b54bd31271d6b5c3ced79dd11e782b9c50974375bfe5ed9efece3b329c993d8868e8ca3ba80bebfe9f01cf3aa3f2771c70043ba1c2e4437ac3fce74e90942506b6cb9b1bf23b815d60310087ffc1e2117501c9aa3b1e59f1c919c675278720b992c27b0d9b8dbd8eedc7b69a22080a07a00865cf567c3f2376bb13e9db78855bf1507226f5c8a0ba8cb2a104ac5292ff8cabc940eee046452e339e6a549f12dd6ba0dbf36f15be6234f144d3b7923a1ccc8129e6965f80143722f666ef773aa536da5982be034abf2e563f009a3ece16df2bb40a742484608f0691ff51a784bd2a495bc693c0b00ede8c6d9951c937875a394a99f6220dcecbf0cfef51b5eb98a7dc431a4e4d8cb6f6662a02ba14eb788216f7894cbefbe615a6bc754b68fac1bdf60bbd17bae1eb57f58c97e4194f9e75c9a7c66ba841a08cb71ec556d2959028a35a5f423caad4ed6b014ddf996484f37944dd7547d7d83d9f22ed0d662a2d871e98215353e342cae0339b9b88074635292cbd284da2ad5bf9daab3ca07a62f1d6a5de681508f708c5c63d885fc812acc3d406e60c607923cb5aa4e28e506b6da31fc47da689f0d6042dd131137d285a88741d4e399625d31379cae4aabd3accc1eb8b26e79c0b4848d1ad260af2330b3ed382b9948e526d626ff66e1925e0003e544c6d4c9c2cbfac33e15348cbb8f9b148fde92c0556a07cbeee1e565c3762875fe094b070ec1a8df8a42d52fe1e3d853a738a6a96599bc7a9b6a0593230808eb8b</script>
+  <div class="hbe hbe-content">
+    <div class="hbe hbe-input hbe-input-default">
+      <input class="hbe hbe-input-field hbe-input-field-default" type="password" id="hbePass">
+      <label class="hbe hbe-input-label hbe-input-label-default" for="hbePass">
+        <span class="hbe hbe-input-label-content hbe-input-label-content-default">您好，请输入密码后查看.</span>
+      </label>
+    </div>
+  </div>
+</div>
+<script data-pjax src="/lib/hbe.js"></script><link href="/css/hbe.style.css" rel="stylesheet" type="text/css">
   </div>
 </article>
 
@@ -199,10 +199,6 @@
 
     
     
-      <div id="toc-footer" style="display: none">
-        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#%E5%BA%8F%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">序言</span></a></li></ol>
-      </div>
-    
 
     <div id="share-footer" style="display: none">
       <ul>
@@ -215,7 +211,7 @@
   <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&title=JDK类绕过TemplatesImpl黑名单"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
   <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&title=JDK类绕过TemplatesImpl黑名单"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
   <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&title=JDK类绕过TemplatesImpl黑名单"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
-  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&name=JDK类绕过TemplatesImpl黑名单&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&name=JDK类绕过TemplatesImpl黑名单&description=这是一篇加密文章，需要密码才能继续阅读。"><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
   <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://shear1n.github.io/2024/01/05/JDK%E7%B1%BB%E7%BB%95%E8%BF%87TemplatesImpl%E9%BB%91%E5%90%8D%E5%8D%95/&t=JDK类绕过TemplatesImpl黑名单"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
 </ul>
 
@@ -223,8 +219,6 @@
 
     <div id="actions-footer">
         <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
-        
-          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
         
         <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
         <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
